@@ -1,0 +1,78 @@
+package com.lixoten.fido.navigation
+
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.lixoten.fido.feature_notes.screens.dummy_screen.DummyScreen
+import com.lixoten.fido.feature_notes.screens.dummy_screen.DummyScreenDestination
+import com.lixoten.fido.feature_notes.screens.edit_note.EditNoteScreen
+import com.lixoten.fido.feature_notes.screens.edit_note.EditNoteScreenDestination
+import com.lixoten.fido.feature_notes.screens.home.HomeScreen
+import com.lixoten.fido.feature_notes.screens.home.HomeScreenDestination
+import com.lixoten.fido.feature_notes.screens.notes_list.NotesScreen
+import com.lixoten.fido.feature_notes.screens.notes_list.NotesScreenDestination
+
+@Composable
+fun FidoNavHost(
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+) {
+    NavHost(
+        navController = navController,
+        startDestination = HomeScreenDestination.route,
+        modifier = modifier
+    ) {
+        composable(route = HomeScreenDestination.route) {
+            HomeScreen(
+                modifier = Modifier.padding(8.dp),
+                navController = navController,
+            )
+        }
+        composable(route = NotesScreenDestination.route) {
+            NotesScreen(
+                modifier = Modifier.padding(8.dp),
+                navController = navController,
+            )
+        }
+        composable(route = DummyScreenDestination.route) {
+            DummyScreen(
+                modifier = Modifier.padding(8.dp),
+                navController = navController,
+            )
+        }
+
+        //adb shell am kill com.lixoten.fido
+
+        composable(
+            route = EditNoteScreenDestination.route + "?id={id}",
+            //route = EditNoteScreenDestination.routeWithArgs + "{id}",
+            arguments = listOf(
+                navArgument(
+                    //EditNoteScreenDestination.routeArg
+                    name = "id"
+                ) {
+                    type = NavType.IntType
+                    defaultValue = -1
+                }
+            )
+        ) {
+
+
+            // Notes Passing ID. Works too. preserved in Process death
+            // val code =
+            //    navBackStackEntry.arguments?.getString(EditNoteScreenDestination.routeArg)
+
+
+            EditNoteScreen(
+                modifier = Modifier.padding(8.dp),
+                navController = navController,
+            )
+        }
+    }
+}
