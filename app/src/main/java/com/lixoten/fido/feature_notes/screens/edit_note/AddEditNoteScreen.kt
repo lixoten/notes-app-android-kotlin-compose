@@ -94,11 +94,6 @@ fun EditNoteScreen(
                 screenTitle = stringResource(id = EditNoteScreenDestination.titleRes),
                 canNavigateUp = true,
                 navigateUp = { navController.navigateUp() },
-//                canDelete = uiState.note.id != -1,
-//                deleteRecord = {
-//                    viewModel.removeDbNote(viewModel.noteModel)
-//                    navController.popBackStack()
-//                },
             )
         },
         floatingActionButton =
@@ -107,7 +102,8 @@ fun EditNoteScreen(
                 FloatingActionButton(
                     modifier = Modifier,
                     onClick = {
-                        viewModel.updateDbNote()
+                        //viewModel.updateDbNote()
+                        viewModel.onEvent(AddEditNoteEvents.UpdateDbNotes(Note(0,"","",0,false,false)))
                         navController.popBackStack()
                     }
                 ) {
@@ -146,33 +142,9 @@ fun EditNoteScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-//                val v: ImageVector
-//                val cd: String
-//                val tin: Color
-//                if (uiState.isChecked) {
-//                    v = Icons.Default.DoneOutline
-//                    cd = "Done"
-//                    tin = Color.Red
-//                } else {
-//                    v = Icons.Default.Done
-//                    cd = "Done"
-//                    tin = Color.Red
-//                }
-//                IconButton(
-//                    enabled = uiState.title.isNotEmpty(),
-//                    onClick = {
-//                        viewModel.updateStateCheck(!uiState.isChecked)
-//                    }
-//                ) {
-//                    Icon(
-//                        imageVector = v,
-//                        contentDescription = cd,
-//                        tint = tin
-//                    )
-//                }
                 IconButton(
                     onClick = {
-                        viewModel.updateStatePinned()
+                        viewModel.onEvent(AddEditNoteEvents.UpdateStatePinned)
                     }
                 ) {
                     Icon(
@@ -186,7 +158,7 @@ fun EditNoteScreen(
                 IconButton(
                     onClick = {
                         if (uiState.note.id > 0) {
-                            viewModel.removeDbNote(viewModel.uiState.value.note)
+                            viewModel.onEvent(AddEditNoteEvents.RemoveDbNote(viewModel.uiState.value.note))
                         }
                         navController.popBackStack()
                     }
@@ -203,7 +175,7 @@ fun EditNoteScreen(
                     Checkbox(
                         checked = uiState.note.isChecked,
                         onCheckedChange = {
-                            viewModel.updateStateCheck(it)
+                            viewModel.onEvent(AddEditNoteEvents.UpdateStateCheck)
                         }
                     )
                 }
@@ -212,7 +184,8 @@ fun EditNoteScreen(
                 value = uiState.note.title,
                 onValueChange = {
 
-                    viewModel.updateStateTitle(it)
+                    viewModel.onEvent(AddEditNoteEvents.UpdateStateTitle(it))
+
                     //if (it.length <= 15) editNoteViewModel.updateStateTitle(it)
                     //else Toast.makeText(mContext, "Cannot be more than 5 Characters", Toast.LENGTH_SHORT).show()
 
@@ -229,12 +202,7 @@ fun EditNoteScreen(
             MyTextField(
                 value = uiState.note.content,
                 onValueChange = {
-
-                    viewModel.updateStateContent(it)
-                    //if (it.length <= 15) editNoteViewModel.updateStateTitle(it)
-                    //else Toast.makeText(mContext, "Cannot be more than 5 Characters", Toast.LENGTH_SHORT).show()
-
-
+                    viewModel.onEvent(AddEditNoteEvents.UpdateStateContent(it))
                 },
                 labelResId = R.string.add_content_label,
                 placeHolderResId = R.string.add_content_placeholder,
@@ -278,7 +246,7 @@ fun EditNoteScreen(
                                             )
                                         )
                                     }
-                                    viewModel.updateStateColor(colorInt)
+                                    viewModel.onEvent(AddEditNoteEvents.UpdateStateColor(colorInt))
                                 }
                         )
                     }

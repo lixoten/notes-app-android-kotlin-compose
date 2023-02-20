@@ -6,7 +6,6 @@ data class NotesUiState(
     val noteOrderBy: NoteOrderBy = NoteOrderBy.Title(OrderType.Descending),
     val isOrderSectionVisible: Boolean = false,
 
-    //val inputNote: String = "",
     val notes: List<Note> = emptyList()
 )
 

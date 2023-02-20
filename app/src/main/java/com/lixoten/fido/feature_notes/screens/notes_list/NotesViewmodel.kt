@@ -114,118 +114,90 @@ class NotesViewmodel(
 //        }
 //    }
 
-    fun updateStateOrderSectionIsVisible() {
-        _uiState.update {
-            uiState.value.copy(
-                isOrderSectionVisible = !uiState.value.isOrderSectionVisible
-            )
-        }
-    }
+    fun onEvents(event: NotesEvents) {
+        when (event) {
+            is NotesEvents.RemoveDbRecord -> {
+                viewModelScope.launch {
+                    deletedNote = event.note
 
-    fun updateStateNoteOrderBy(order: NoteOrderBy) {
-        _uiState.update {
-            uiState.value.copy(
-                noteOrderBy = order.copy(orderType = order.orderType)
-            )
-        }
-        getAllDbNotes(order)
-    }
-
-
-
-    // #####################
-    // DataBase interactions
-
-    fun updateDbIsCheck(record: Note) {
-        viewModelScope.launch {
-            notesRepository.updateNote(
-                note = record.copy(
-                    isChecked = !record.isChecked
-                )
-            )
-        }
-    }
-
-    fun updateDbIsPinned(record: Note) {
-        viewModelScope.launch {
-            notesRepository.updateNote(
-                note = record.copy(
-                    isPinned = !record.isPinned
-                )
-            )
-        }
-    }
-
-    // Notes: Works because of REPLACE
-    //  - as in: @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun XXXchangeNoteChecked(record: Note) {
-        viewModelScope.launch {
-            notesRepository.insertNote(
-                note = record.copy(
-                    isChecked = !record.isChecked
-                )
-            )
-        }
-    }
-
-
-    fun removeDbRecord(record: Note) {
-        viewModelScope.launch {
-            deletedNote = record
-
-            notesRepository.deleteNote(record)
-        }
-    }
-
-    fun restoreDbRecord() {
-        viewModelScope.launch {
-            notesRepository.insertNote(deletedNote ?: return@launch)
-            deletedNote = null
-        }
-    }
-
-    fun addDbRecord() {
-        // beg before room
-        // val newId: Int
-        // if (uiState.value.notes.isEmpty()){
-        //     newId = 1
-        // } else {
-        //     newId = uiState.value.notes[uiState.value.notes.lastIndex].id + 1
-        // }
-        //val tmp = formatNewRecord(item.name, newId)
-        val record =
-            Note(
-                id = 0,
-                title = "Untitle Note",
-                content = "",
-                color = 0,
-                isPinned = false,
-            )
-
-        // end before room
-
-        viewModelScope.launch {
-            val newId: Int
-            val sz = uiState.value.notes.count()
-
-            if (sz == 0) {
-                newId = 1
-            } else {
-                newId = sz + 1
+                    notesRepository.deleteNote(event.note)
+                }
             }
-            val tmp = formatNewRecord(record.title, newId)
+            is NotesEvents.RestoreDbRecord -> {
+                viewModelScope.launch {
+                    notesRepository.insertNote(deletedNote ?: return@launch)
+                    deletedNote = null
+                }
+            }
+            is NotesEvents.AddDbRecord -> {
+                val record =
+                    Note(
+                        id = 0,
+                        title = "Untitle Note",
+                        content = "",
+                        color = 0,
+                        isPinned = false,
+                    )
 
-            notesRepository.insertNote(
-                Note(
-                    title = tmp,
-                    content = record.content,
-                    color = record.color,
-                    isPinned = record.isPinned,
-                )
-            )
+                // end before room
+
+                viewModelScope.launch {
+                    val newId: Int
+                    val sz = uiState.value.notes.count()
+
+                    if (sz == 0) {
+                        newId = 1
+                    } else {
+                        newId = sz + 1
+                    }
+                    val tmp = formatNewRecord(record.title, newId)
+
+                    notesRepository.insertNote(
+                        Note(
+                            title = tmp,
+                            content = record.content,
+                            color = record.color,
+                            isPinned = record.isPinned,
+                        )
+                    )
+                }
+            }
+            is NotesEvents.UpdateStateOrderSectionIsVisible -> {
+                _uiState.update {
+                    uiState.value.copy(
+                        isOrderSectionVisible = !uiState.value.isOrderSectionVisible
+                    )
+                }
+            }
+            is NotesEvents.UpdateDbIsCheck -> {
+                viewModelScope.launch {
+                    notesRepository.updateNote(
+                        note = event.note.copy(
+                            isChecked = !event.note.isChecked
+                        )
+                    )
+                }
+            }
+            is NotesEvents.UpdateDbIsUnpin -> {
+                viewModelScope.launch {
+                    notesRepository.updateNote(
+                        note = event.note.copy(
+                            isPinned = !event.note.isPinned
+                        )
+                    )
+                }
+            }
+            is NotesEvents.UpdateStateNoteOrderBy -> {
+                _uiState.update {
+                    uiState.value.copy(
+                        noteOrderBy = event.orderBy.copy(orderType = event.orderBy.orderType)
+                    )
+                }
+                getAllDbNotes(event.orderBy)
+            }
         }
-
     }
+
 
     private fun formatNewRecord(input: String, num: Int): String {
         return if (input == "") {

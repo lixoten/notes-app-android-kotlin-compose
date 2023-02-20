@@ -52,90 +52,74 @@ class AddEditNoteViewmodel(
     }
 
 
-    fun updateStateTitle(title: String) {
-        _uiState.update {
-            it.copy(
-                note = _uiState.value.note.copy(
-                    title = title,
-                ),
-                //title = title,
-                dataHasChanged = true,
-                titleError = (title.length < 2)
-            )
+    fun onEvent(event: AddEditNoteEvents) {
+        when(event) {
+            is AddEditNoteEvents.UpdateStateTitle -> {
+                _uiState.update {
+                    it.copy(
+                        note = _uiState.value.note.copy(
+                            title = event.value,
+                        ),
+                        //title = title,
+                        dataHasChanged = true,
+                        titleError = (event.value.length < 2)
+                    )
+                }
+            }
+            is AddEditNoteEvents.UpdateStateContent -> {
+                _uiState.update {
+                    it.copy(
+                        note = _uiState.value.note.copy(
+                            content = event.value,
+                        ),
+                        dataHasChanged = true,
+                    )
+                }
+            }
+            is AddEditNoteEvents.UpdateStateColor -> {
+                _uiState.update {
+                    it.copy(
+                        note = _uiState.value.note.copy(
+                            color = event.value,
+                        ),
+                        dataHasChanged = true,
+                    )
+                }
+            }
+            is AddEditNoteEvents.UpdateStateCheck -> {
+                _uiState.update {
+                    it.copy(
+                        note = _uiState.value.note.copy(
+                            isChecked = !uiState.value.note.isChecked,
+                        ),
+                        dataHasChanged = true,
+                    )
+                }
+            }
+            is AddEditNoteEvents.UpdateStatePinned -> {
+                _uiState.update {
+                    it.copy(
+                        note = _uiState.value.note.copy(
+                            isPinned = !uiState.value.note.isPinned,
+                        ),
+                        dataHasChanged = true,
+                    )
+                }
+            }
+            is AddEditNoteEvents.UpdateDbNotes -> {
+                viewModelScope.launch {
+                    notesRepository.insertNote(
+                        uiState.value.note
+                    )
+                }
+            }
+            is AddEditNoteEvents.RemoveDbNote -> {
+                viewModelScope.launch {
+                    notesRepository.deleteNote(event.note)
+                }
+            }
         }
     }
-    fun updateStateContent(content: String) {
-        _uiState.update {
-            it.copy(
-                note = _uiState.value.note.copy(
-                    content = content,
-                ),
-                //content = content,
-                dataHasChanged = true,
-                //error = (title.length < 2)
-            )
-        }
-    }
-    fun updateStateColor(cl: Int) {
-        _uiState.update {
-            it.copy(
-                note = _uiState.value.note.copy(
-                    color = cl,
-                ),
-                //color = cl,
-                dataHasChanged = true,
-                //error = (title.length < 2)
-            )
-        }
-    }
-    fun updateStateCheck(ck: Boolean) {
-        _uiState.update {
-            it.copy(
-                note = _uiState.value.note.copy(
-                    isChecked = ck,
-                ),
-                //isChecked = ck,
-                dataHasChanged = true,
-            )
-        }
-    }
-    fun updateStatePinned() {
-        _uiState.update {
-            it.copy(
-                note = _uiState.value.note.copy(
-                    isPinned = !uiState.value.note.isPinned,
-                ),
-                //isPinned = !uiState.value.note.isPinned,
-                dataHasChanged = true,
-            )
-        }
-    }
-
-    fun updateDbNote() {
-        viewModelScope.launch {
-            notesRepository.insertNote(
-                uiState.value.note
-//                uiState.value.note.copy(
-//                    title = uiState.value.title,
-//                    content = uiState.value.content,
-//                    color = uiState.value.color,
-//                    isChecked = uiState.value.isChecked,
-//                    isPinned = uiState.value.isPinned,
-//                    createdDate = System.currentTimeMillis(),
-//                    lastMaintDate = System.currentTimeMillis(),
-//                )
-            )
-        }
-    }
-
-    fun removeDbNote(item: Note) {
-        viewModelScope.launch {
-            notesRepository.deleteNote(item)
-        }
-    }
-
-
-
 
 
     // Notes: Question: At moment this is chuck of code is repeated in two files

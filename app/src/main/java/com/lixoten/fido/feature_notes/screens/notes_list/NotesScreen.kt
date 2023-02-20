@@ -60,7 +60,8 @@ fun NotesScreen(
                 canNavigateUp = true,
                 canAdd = true,
                 onAddRecord = {
-                    viewModel.addDbRecord()
+                    //viewModel.addDbRecord()
+                    viewModel.onEvents(NotesEvents.AddDbRecord)
                 },
             )
         },
@@ -88,7 +89,7 @@ fun NotesScreen(
                 uiState = uiState,
 
                 onCheckedNote = { note, _, _ ->
-                    viewModel.updateDbIsCheck(note)
+                    viewModel.onEvents(NotesEvents.UpdateDbIsCheck(note))
                     scope.launch {
                         scaffoldState.snackbarHostState.showSnackbar(
                             "WTF" + note.title
@@ -96,7 +97,7 @@ fun NotesScreen(
                     }
                 },
                 onRemoveNote = { note ->
-                    viewModel.removeDbRecord(note)
+                    viewModel.onEvents(NotesEvents.RemoveDbRecord(note))
 
                     scope.launch {
                         val result = scaffoldState.snackbarHostState.showSnackbar(
@@ -104,7 +105,7 @@ fun NotesScreen(
                             actionLabel = remove_note_undo_label,
                         )
                         if(result == SnackbarResult.ActionPerformed) {
-                            viewModel.restoreDbRecord()
+                            viewModel.onEvents(NotesEvents.RestoreDbRecord)
                         }
                     }
                 },
@@ -114,15 +115,15 @@ fun NotesScreen(
                     )
                 },
                 onOrderChange = {
-                    viewModel.updateStateNoteOrderBy(it)
+                    viewModel.onEvents(NotesEvents.UpdateStateNoteOrderBy(it))
                     //////////.......notesViewModel.onEvents(NotesEvents.OrderLixo(it))
                 },
                 onToggleSection = {
-                    viewModel.updateStateOrderSectionIsVisible()
+                    viewModel.onEvents(NotesEvents.UpdateStateOrderSectionIsVisible)
                     //////////.......notesViewModel.onEvents(NotesEvents.ToggleOrderSection)
                 },
                 onPinnedNote = {
-                    viewModel.updateDbIsPinned(it)
+                    viewModel.onEvents(NotesEvents.UpdateDbIsUnpin(it))
                     //////////.......notesViewModel.onEvents(NotesEvents.ToggleOrderSection)
                 }
             )
