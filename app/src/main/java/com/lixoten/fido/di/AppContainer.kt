@@ -1,10 +1,10 @@
 package com.lixoten.fido.di
 
 import android.content.Context
-import com.lixoten.fido.features.feature_notes.data.NotesDatabase
-import com.lixoten.fido.features.feature_notes.data.NotesRepository
-import com.lixoten.fido.features.feature_notes.data.OfflineNotesRepository
-import com.lixoten.fido.features.feature_notes.domain.use_case.*
+import com.lixoten.fido.feature_notes.data.NotesDatabase
+import com.lixoten.fido.feature_notes.data.NotesRepository
+import com.lixoten.fido.feature_notes.data.OfflineNotesRepository
+import com.lixoten.fido.feature_notes.domain.use_case.*
 
 /**
  * App container for Dependency injection.

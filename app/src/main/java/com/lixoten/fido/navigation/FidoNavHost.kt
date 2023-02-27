@@ -9,14 +9,14 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.lixoten.fido.features.feature_notes.presentation.dummy_screen.DummyScreen
-import com.lixoten.fido.features.feature_notes.presentation.dummy_screen.DummyScreenDestination
-import com.lixoten.fido.features.feature_notes.presentation.edit_note.EditNoteScreen
-import com.lixoten.fido.features.feature_notes.presentation.edit_note.EditNoteScreenDestination
-import com.lixoten.fido.features.feature_notes.presentation.home.HomeScreen
-import com.lixoten.fido.features.feature_notes.presentation.home.HomeScreenDestination
-import com.lixoten.fido.features.feature_notes.presentation.notes_list.NotesScreen
-import com.lixoten.fido.features.feature_notes.presentation.notes_list.NotesScreenDestination
+import com.lixoten.fido.feature_notes.presentation.edit_note.EditNoteScreen
+import com.lixoten.fido.feature_notes.presentation.edit_note.EditNoteScreenDestination
+import com.lixoten.fido.feature_notes.presentation.notes_list.NotesScreen
+import com.lixoten.fido.feature_notes.presentation.notes_list.NotesScreenDestination
+import com.lixoten.fido.presentation.dummy_screen.DummyScreen
+import com.lixoten.fido.presentation.dummy_screen.DummyScreenDestination
+import com.lixoten.fido.presentation.home.HomeScreen
+import com.lixoten.fido.presentation.home.HomeScreenDestination
 
 @Composable
 fun FidoNavHost(

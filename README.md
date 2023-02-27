@@ -9,14 +9,14 @@ Note App that displays a list of Notes. It allows the user to add, delete notes
 
 ## Todo
 - Adapt for different size screens
-- Introduce User Cases
 - DataStore Preferences
-- Revisit App package structure. Add Domain package
 - Material Design 3
 
-- Complete
+## Completed
 - Add Room DB
 - Introduce Sealed Data Class for Events
+- Introduce User Cases
+- Revisit App package structure. Add Domain package
 - 
 
 
