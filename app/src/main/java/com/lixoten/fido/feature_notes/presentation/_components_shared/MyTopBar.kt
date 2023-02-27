@@ -7,6 +7,8 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.ViewList
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -17,8 +19,10 @@ fun MyTopBar(
     screenTitle: String,
     canNavigateUp: Boolean,
     navigateUp: () -> Unit = { },
+    isGridLayout: Boolean = false,
     canAdd: Boolean = false,
     onAddRecord: () -> Unit = { },
+    onToggleLayout: () -> Unit = { },
 //    canDelete: Boolean = false,
 //    deleteRecord: () -> Unit = { },
 //    canPin: Boolean = false,
@@ -58,6 +62,18 @@ fun MyTopBar(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(R.string.add_note_icon_descr),
+                            //tint = Color.Red
+                            //modifier = Modifier.size(24.dp),
+                        )
+                    }
+
+                    IconButton(
+                        onClick = onToggleLayout
+                    ) {
+                        Icon(
+                            imageVector = if (isGridLayout) Icons.Default.GridView else Icons.Default.ViewList,
+                            // Danger fix me
                             contentDescription = stringResource(R.string.add_note_icon_descr),
                             //tint = Color.Red
                             //modifier = Modifier.size(24.dp),

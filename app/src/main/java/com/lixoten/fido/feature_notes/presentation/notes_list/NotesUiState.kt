@@ -5,6 +5,7 @@ import com.lixoten.fido.feature_notes.model.Note
 data class NotesUiState(
     val noteOrderBy: NoteOrderBy = NoteOrderBy.Title(OrderType.Descending),
     val isOrderSectionVisible: Boolean = false,
+    val isGridLayout: Boolean = false,
 
     val notes: List<Note> = emptyList()
 )

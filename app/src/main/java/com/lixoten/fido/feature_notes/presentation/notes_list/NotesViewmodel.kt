@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.lixoten.fido.NotesApplication
+import com.lixoten.fido.feature_notes.data.UserPreferencesRepository
 import com.lixoten.fido.feature_notes.domain.use_case.NoteUseCases
 import com.lixoten.fido.feature_notes.model.Note
 import kotlinx.coroutines.Job
@@ -14,6 +15,7 @@ import kotlinx.coroutines.launch
 
 class NotesViewmodel(
     private val noteUseCasesWrapper: NoteUseCases,
+    private val userPreferencesRepository: UserPreferencesRepository
     //val notesRepository: NotesRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(NotesUiState())
@@ -40,6 +42,14 @@ class NotesViewmodel(
     private val x = 2
 
     init {
+        viewModelScope.launch {
+            userPreferencesRepository.userPreferencesFlow.collect {
+                _uiState.value = uiState.value.copy(
+                    isGridLayout = it.isGridLayout,
+                )
+                //processSearchQueryFlow(it.searchValue)
+            }
+        }
         if (x == 1) {
 //            viewModelScope.launch {
 //                val noteList = notesRepository.getAllNotes()
@@ -88,9 +98,23 @@ class NotesViewmodel(
     //        }
     //    }
 
+    fun updatePreferenceLayout(newValue: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.updateUserPreferences(isGridLayout = newValue)
+        }
+    }
+
 
     fun onEvents(event: NotesEvents) {
         when (event) {
+            is NotesEvents.ToggleLayout -> {
+                _uiState.update {
+                    uiState.value.copy(
+                        isGridLayout = !uiState.value.isGridLayout
+                    )
+                }
+                updatePreferenceLayout(uiState.value.isGridLayout)
+            }
             is NotesEvents.RemoveDbRecord -> {
                 viewModelScope.launch {
                     deletedNote = event.note
@@ -188,10 +212,13 @@ class NotesViewmodel(
                     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as NotesApplication)
                 //val notesRepository = application.appContainer.notesRepository
                 val noteUseCasesXXX = application.appContainer.noteUseCases
+                val preferencesRepository = application.userPreferencesRepository
+
                 NotesViewmodel(
                     //this.createSavedStateHandle(),
                     //notesRepository = notesRepository,
-                    noteUseCasesWrapper = noteUseCasesXXX
+                    noteUseCasesWrapper = noteUseCasesXXX,
+                    userPreferencesRepository = preferencesRepository
                 )
             }
         }

@@ -3,11 +3,16 @@ package com.lixoten.fido.feature_notes.presentation.notes_list
 import androidx.annotation.StringRes
 import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -59,9 +64,13 @@ fun NotesScreen(
                 navigateUp = { navController.navigateUp() },
                 canNavigateUp = true,
                 canAdd = true,
+                isGridLayout = uiState.isGridLayout,
                 onAddRecord = {
                     //viewModel.addDbRecord()
                     viewModel.onEvents(NotesEvents.AddDbRecord)
+                },
+                onToggleLayout = {
+                    viewModel.onEvents(NotesEvents.ToggleLayout)
                 },
             )
         },
@@ -104,7 +113,7 @@ fun NotesScreen(
                             message = remove_note_msg,
                             actionLabel = remove_note_undo_label,
                         )
-                        if(result == SnackbarResult.ActionPerformed) {
+                        if (result == SnackbarResult.ActionPerformed) {
                             viewModel.onEvents(NotesEvents.RestoreDbRecord)
                         }
                     }
@@ -131,6 +140,7 @@ fun NotesScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NoteList(
     modifier: Modifier = Modifier,
@@ -151,14 +161,18 @@ fun NoteList(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
+                text = uiState.isGridLayout.toString(),
+                style = MaterialTheme.typography.h4
+            )
+            Text(
                 text = "Notes",
                 style = MaterialTheme.typography.h4
             )
             IconButton(
-                onClick =  onToggleSection
+                onClick = onToggleSection
                 //{
-                    //notesViewmodel.onEvents(NotesEvents.UpdateIsOrderSectionVisible())
-                    //..viewModel.onEvent(NoteListEventsWrapper.ToggleOrderSection)
+                //notesViewmodel.onEvents(NotesEvents.UpdateIsOrderSectionVisible())
+                //..viewModel.onEvent(NoteListEventsWrapper.ToggleOrderSection)
                 //},
             ) {
                 Icon(
@@ -187,31 +201,66 @@ fun NoteList(
         }
         Spacer(modifier = Modifier.height(4.dp))
 
+        //Column(modifier = Modifier.fillMaxSize()) {
+        if (uiState.isGridLayout) {
+            LazyVerticalStaggeredGrid(
+                //columns = GridCells.Fixed(2)
+                columns = StaggeredGridCells.Fixed(2),
+                //horizontalArrangement = Arrangement.spacedBy(0.dp),
+                content = {
+                    itemsIndexed(
+                        items = uiState.notes,
+                        /**
+                         * Use key param to define unique keys representing the items in a mutable list,
+                         * instead of using the default key (list position). This prevents unnecessary
+                         * recompositions.
+                         */
+                        //key = { xx, note -> note.id }
+                    ) { index, note ->
+                        NoteItem(
+                            note = note,
+                            checked = note.isChecked,
+                            onCheckedNote = { itt -> onCheckedNote(note, index, itt) },
+                            onRemoveNote = { onRemoveNote(note) },
+                            onNoteClick = { onNoteClick(note) },
+                            //onPinnedNote = onPinnedNote
+                            onPinnedNote = { onPinnedNote(note) },
+                            isGridLayout = uiState.isGridLayout,
+                        )
+                    }
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = modifier
-        ) {
-            itemsIndexed(
-                items = uiState.notes,
-                /**
-                 * Use key param to define unique keys representing the items in a mutable list,
-                 * instead of using the default key (list position). This prevents unnecessary
-                 * recompositions.
-                 */
-                //key = { xx, note -> note.id }
-            ) { index, note ->
-                NoteItem(
-                    note = note,
-                    checked = note.isChecked,
-                    onCheckedNote = { itt -> onCheckedNote(note, index, itt) },
-                    onRemoveNote = { onRemoveNote(note) },
-                    onNoteClick = { onNoteClick(note) },
-                    //onPinnedNote = onPinnedNote
-                    onPinnedNote = { onPinnedNote(note) }
-                )
+                }
+            )
+        } else {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = modifier
+            ) {
+                itemsIndexed(
+                    items = uiState.notes,
+                    /**
+                     * Use key param to define unique keys representing the items in a mutable list,
+                     * instead of using the default key (list position). This prevents unnecessary
+                     * recompositions.
+                     */
+                    //key = { xx, note -> note.id }
+                ) { index, note ->
+                    NoteItem(
+                        note = note,
+                        checked = note.isChecked,
+                        onCheckedNote = { itt -> onCheckedNote(note, index, itt) },
+                        onRemoveNote = { onRemoveNote(note) },
+                        onNoteClick = { onNoteClick(note) },
+                        //onPinnedNote = onPinnedNote
+                        onPinnedNote = { onPinnedNote(note) },
+                        isGridLayout = uiState.isGridLayout,
+                    )
+                }
             }
         }
+
+        //}
+
 
     }
 }
@@ -221,74 +270,106 @@ fun NoteItem(
     modifier: Modifier = Modifier,
     note: Note,
     checked: Boolean,
+    isGridLayout: Boolean,
     onCheckedNote: (Boolean) -> Unit,
     onRemoveNote: () -> Unit,
     onPinnedNote: (Note) -> Unit,
     onNoteClick: (Note) -> Unit,
 ) {
-    Surface(
+    Card(
+        modifier = Modifier
+            .padding(4.dp)
+            .clickable {
+                onNoteClick(note)
+            },
+        //backgroundColor = Color(note.color),
+        shape = RoundedCornerShape(12.dp),
         border = BorderStroke(1.dp, Color.LightGray),
         elevation = 8.dp
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(1.dp)
                 .background(Color(note.color))
-                .clickable {
-                    onNoteClick(note)
-                }
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(start = 4.dp, top = 8.dp, bottom = 8.dp)
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = modifier
+                    //.fillMaxWidth()
+                    //.padding(1.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(start = 4.dp, top = 8.dp, bottom = 8.dp)
                 ) {
-                    if (note.isPinned) {
-                        IconButton(
-                            onClick = { onPinnedNote(note) }
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_pin_filled),
-                                contentDescription = "pin",
-                                //tint = Violet,
-                                modifier = Modifier.size(24.dp),
-                            )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (note.isPinned) {
+                            IconButton(
+                                onClick = { onPinnedNote(note) }
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_pin_filled),
+                                    contentDescription = "pin",
+                                    //tint = Violet,
+                                    modifier = Modifier.size(24.dp),
+                                )
+                            }
                         }
+                        Text(
+                            modifier = Modifier,
+                            //.padding(start = 16.dp),
+                            text = note.title,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.h6
+                        )
                     }
                     Text(
                         modifier = Modifier,
                         //.padding(start = 16.dp),
-                        text = note.title,
-                        maxLines = 1,
+                        text = note.content,
+                        maxLines = 12,
                         overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.h6
+                        style = MaterialTheme.typography.body1
                     )
                 }
-                Text(
-                    modifier = Modifier,
-                        //.padding(start = 16.dp),
-                    text = note.content,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.body1
-                )
+                if (!isGridLayout) {
+                    Row {
+                        Checkbox(
+                            checked = checked,
+                            onCheckedChange = onCheckedNote
+                        )
+                        IconButton(onClick = onRemoveNote) {
+                            Icon(
+                                Icons.Filled.Close,
+                                contentDescription = stringResource(R.string.remove_note_img_desc)
+                            )
+                        }
+                    }
+                }
             }
-            Checkbox(
-                checked = checked,
-                onCheckedChange = onCheckedNote
-            )
-            IconButton(onClick = onRemoveNote) {
-                Icon(
-                    Icons.Filled.Close,
-                    contentDescription = stringResource(R.string.remove_note_img_desc)
-                )
+            if (isGridLayout) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Checkbox(
+                        checked = checked,
+                        onCheckedChange = onCheckedNote
+                    )
+                    IconButton(onClick = onRemoveNote) {
+                        Icon(
+                            Icons.Filled.Close,
+                            contentDescription = stringResource(R.string.remove_note_img_desc)
+                        )
+                    }
+                }
             }
         }
     }
@@ -370,7 +451,7 @@ fun DefaultRadioButton(
         RadioButton(
             selected = selected,
             onClick = onSelected,
-            colors =  RadioButtonDefaults.colors(
+            colors = RadioButtonDefaults.colors(
                 selectedColor = MaterialTheme.colors.primary,
                 unselectedColor = MaterialTheme.colors.onBackground
             )
@@ -388,7 +469,6 @@ fun NoteListPreview() {
     NoteList(
         uiState = NotesUiState(
             notes = mockNoteList,
-
         ),
         onCheckedNote = { _, _, _ -> },
         onRemoveNote = { },
@@ -403,7 +483,8 @@ fun NoteListPreview() {
 @Preview
 @Composable
 fun NoteRowPreview() {
-    val mockNote = com.lixoten.fido.feature_notes.data.InitialData.getNotes().toMutableStateList()[0]
+    val mockNote =
+        InitialData.getNotes().toMutableStateList()[0]
 
     NoteItem(
         note = mockNote,
@@ -411,6 +492,7 @@ fun NoteRowPreview() {
         onCheckedNote = { },
         onRemoveNote = { },
         onNoteClick = { },
-        onPinnedNote = { }
+        onPinnedNote = { },
+        isGridLayout = false
     )
 }

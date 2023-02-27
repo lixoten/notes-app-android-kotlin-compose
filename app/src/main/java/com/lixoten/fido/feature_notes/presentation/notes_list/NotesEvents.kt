@@ -11,4 +11,5 @@ sealed class NotesEvents{
     object RestoreDbRecord: NotesEvents()
     object AddDbRecord: NotesEvents()
     object UpdateStateOrderSectionIsVisible: NotesEvents()
+    object ToggleLayout: NotesEvents()
 }

@@ -12,13 +12,22 @@ Note App that displays a list of Notes. It allows the user to add, delete notes
 - DataStore Preferences for sort options
 - Revisit Top AppBar
 - Material Design 3
+- Introduce Dagger-Hilt to app DI
+- App Icon
+- About Screen
+- Dark/Light Theme
+- add real time Search filter 
+- swipe left delete
+
 
 ## Completed
 - Add Room DB
+- Manual DI
 - Introduce Sealed Data Class for Events
-- Introduce User Cases
+- Introduce use-cases
 - Revisit App package structure. Add Domain package
 - At least one validation use case
+- Grid(StaggeredGrid) / List Toggle 
 
 
 Github branches
