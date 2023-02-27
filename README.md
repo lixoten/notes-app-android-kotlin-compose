@@ -9,7 +9,8 @@ Note App that displays a list of Notes. It allows the user to add, delete notes
 
 ## Todo
 - Adapt for different size screens
-- DataStore Preferences
+- DataStore Preferences for sort options
+- Revisit Top AppBar
 - Material Design 3
 
 ## Completed
@@ -17,9 +18,9 @@ Note App that displays a list of Notes. It allows the user to add, delete notes
 - Introduce Sealed Data Class for Events
 - Introduce User Cases
 - Revisit App package structure. Add Domain package
-- 
+- At least one validation use case
 
 
-### Github branches
+Github branches
 
 ref: notes-app-android-kotlin-compose
