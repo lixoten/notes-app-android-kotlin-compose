@@ -3,7 +3,7 @@
 
     <string name="add_input_button">Add</string>
     <string name="add_input_label">Note</string>
-    <string name="add_input_label_error">Note must have 2 vhracters</string>
+    <string name="add_input_label_error">Note must have 2 characters</string>
     <string name="add_input_placeholder">Enter a new Note</string>
 
     <string name="add_content_label">Content</string>
@@ -25,9 +25,11 @@
     <string name="save_note_button">Save</string>
     <string name="save_note_img_desc">Save Note</string>
 
+    <string name="cancel_button">Cancel</string>
     <string name="remove_note_button">Delete</string>
     <string name="remove_note_img_desc">Delete</string>
     <string name="remove_note_msg">Note Deleted</string>
+    <string name="remove_note_confirmation_message">Are you sure you want to delete the note: \n \"%1$s\""?</string>
     <string name="remove_note_undo_label">Note Deleted</string>
 
 </resources>

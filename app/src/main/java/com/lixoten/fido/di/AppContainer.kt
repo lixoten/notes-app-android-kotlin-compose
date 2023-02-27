@@ -1,15 +1,17 @@
 package com.lixoten.fido.di
 
 import android.content.Context
-import com.lixoten.fido.feature_notes.data.NotesDatabase
-import com.lixoten.fido.feature_notes.data.NotesRepository
-import com.lixoten.fido.feature_notes.data.OfflineNotesRepository
+import com.lixoten.fido.features.feature_notes.data.NotesDatabase
+import com.lixoten.fido.features.feature_notes.data.NotesRepository
+import com.lixoten.fido.features.feature_notes.data.OfflineNotesRepository
+import com.lixoten.fido.features.feature_notes.domain.use_case.*
 
 /**
  * App container for Dependency injection.
  */
 interface AppContainer {
     val notesRepository: NotesRepository
+    val noteUseCases: NoteUseCases
 }
 
 /**
@@ -23,4 +25,24 @@ class AppDataContainer(private val context: Context) : AppContainer {
     override val notesRepository: NotesRepository by lazy {
         OfflineNotesRepository(NotesDatabase.getDatabase(context).notesDao())
     }
+
+    override val noteUseCases: NoteUseCases by lazy {
+        NoteUseCases(
+            getAllNotes = GetAllNotesUseCase(repository = notesRepository),
+            getNoteById = GetNoteByIdUseCase(repository = notesRepository),
+            updateNote = UpdateNoteUseCase(repository = notesRepository),
+            deleteNote = DeleteNoteUseCase(repository = notesRepository),
+            addNote = AddNoteUseCase(repository = notesRepository),
+            validateNote = ValidateNoteTitleUseCase(),
+        )
+    }
 }
+// Notes:
+//  - Add to use_case
+//  - here in AppContainer
+//    - interface
+//    - override
+//      - many NoteUseCases
+//  - in viewmodel
+//    - in construct
+//    - in factory
