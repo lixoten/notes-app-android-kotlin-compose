@@ -9,7 +9,6 @@ Note App that displays a list of Notes. It allows the user to add, delete notes
 
 ## Todo
 - Adapt for different size screens
-- DataStore Preferences for sort options
 - Revisit Top AppBar
 - Material Design 3
 - Introduce Dagger-Hilt to app DI
@@ -21,13 +20,14 @@ Note App that displays a list of Notes. It allows the user to add, delete notes
 
 
 ## Completed
+- DataStore Preferences for sort options
+- Grid(StaggeredGrid) / List Toggle
 - Add Room DB
 - Manual DI
 - Introduce Sealed Data Class for Events
 - Introduce use-cases
 - Revisit App package structure. Add Domain package
 - At least one validation use case
-- Grid(StaggeredGrid) / List Toggle 
 
 
 Github branches
