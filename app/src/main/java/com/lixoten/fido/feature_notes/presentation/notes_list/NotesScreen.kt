@@ -15,9 +15,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import com.lixoten.fido.R
@@ -30,18 +28,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.lixoten.fido.DrawerBody
 import com.lixoten.fido.feature_notes.data.InitialData
 import com.lixoten.fido.feature_notes.model.Note
 import com.lixoten.fido.feature_notes.presentation._components_shared.MyTopBar
 import com.lixoten.fido.feature_notes.presentation.edit_note.EditNoteScreenDestination
+import com.lixoten.fido.navigation.NavDrawerItem
 import com.lixoten.fido.navigation.NavigationDestination
+import com.lixoten.fido.navigation.doMe
 import kotlinx.coroutines.launch
 
 object NotesScreenDestination : NavigationDestination {
     override val route = "note_list"
 
     @StringRes
-    override val titleRes = R.string.app_name
+    override val titleRes = R.string.notes_screen_name
 }
 
 @Composable
@@ -62,8 +63,9 @@ fun NotesScreen(
             MyTopBar(
                 screenTitle = stringResource(id = NotesScreenDestination.titleRes),
                 navigateUp = { navController.navigateUp() },
-                canNavigateUp = true,
+                canNavigateUp = false,
                 canAdd = true,
+                hasMenu = true,
                 isGridLayout = uiState.isGridLayout,
                 onAddRecord = {
                     //viewModel.addDbRecord()
@@ -71,6 +73,19 @@ fun NotesScreen(
                 },
                 onToggleLayout = {
                     viewModel.onEvents(NotesEvents.ToggleLayout)
+                },
+                onNavigationIconClick = {
+                    scope.launch {
+                        scaffoldState.drawerState.open()
+                    }
+                },
+                onToggleSection = {
+                    viewModel.onEvents(NotesEvents.UpdateStateOrderSectionIsVisible)
+                    //////////.......notesViewModel.onEvents(NotesEvents.ToggleOrderSection)
+                },
+                onToggleSearch = {
+                    viewModel.onEvents(NotesEvents.ToggleSearch)
+                    //////////.......notesViewModel.onEvents(NotesEvents.ToggleOrderSection)
                 },
             )
         },
@@ -83,6 +98,24 @@ fun NotesScreen(
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add Task")
             }
         },
+        drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
+        drawerContent = {
+            DrawerBody(
+                items = listOf(
+                    NavDrawerItem.Home,
+                    NavDrawerItem.Dummy,
+                ),
+                onItemClick = {
+                    //println("Clicked on ${it.title}")
+                    doMe(
+                        scope = scope,
+                        drawerState = scaffoldState.drawerState,
+                        navController = navController,
+                        id = it.id
+                    )
+                }
+            )
+        },
         scaffoldState = scaffoldState,
         //snackbarHost = {
         //    scaffoldState.snackbarHostState
@@ -92,7 +125,6 @@ fun NotesScreen(
         val remove_note_msg = stringResource(R.string.remove_note_msg)
         val remove_note_undo_label = stringResource(R.string.remove_note_undo_label)
 
-        //scaffoldState.drawerState
         Column(modifier = modifier.padding(paddingValues)) {
             NoteList(
                 uiState = uiState,
@@ -127,10 +159,10 @@ fun NotesScreen(
                     viewModel.onEvents(NotesEvents.UpdateStateNoteOrderBy(it))
                     //////////.......notesViewModel.onEvents(NotesEvents.OrderLixo(it))
                 },
-                onToggleSection = {
-                    viewModel.onEvents(NotesEvents.UpdateStateOrderSectionIsVisible)
-                    //////////.......notesViewModel.onEvents(NotesEvents.ToggleOrderSection)
-                },
+//                onToggleSection = {
+//                    viewModel.onEvents(NotesEvents.UpdateStateOrderSectionIsVisible)
+//                    //////////.......notesViewModel.onEvents(NotesEvents.ToggleOrderSection)
+//                },
                 onPinnedNote = {
                     viewModel.onEvents(NotesEvents.UpdateDbIsUnpin(it))
                     //////////.......notesViewModel.onEvents(NotesEvents.ToggleOrderSection)
@@ -151,37 +183,37 @@ fun NoteList(
     onNoteClick: (Note) -> Unit,
     onPinnedNote: (Note) -> Unit,
     onOrderChange: (NoteOrderBy) -> Unit,
-    onToggleSection: () -> Unit
+    //onToggleSection: () -> Unit
 
 ) {
     Column() {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = uiState.isGridLayout.toString(),
-                style = MaterialTheme.typography.h4
-            )
-            Text(
-                text = "Notes",
-                style = MaterialTheme.typography.h4
-            )
-            IconButton(
-                onClick = onToggleSection
-                //{
-                //notesViewmodel.onEvents(NotesEvents.UpdateIsOrderSectionVisible())
-                //..viewModel.onEvent(NoteListEventsWrapper.ToggleOrderSection)
-                //},
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Sort,
-                    contentDescription = stringResource(R.string.sort_icon_descr),
-                    //modifier = Modifier.size(22.dp)
-                )
-            }
-        }
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.SpaceBetween,
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+////            Text(
+////                text = uiState.isGridLayout.toString(),
+////                style = MaterialTheme.typography.h4
+////            )
+////            Text(
+////                text = "Notes",
+////                style = MaterialTheme.typography.h4
+////            )
+//            IconButton(
+//                onClick = onToggleSection
+//                //{
+//                //notesViewmodel.onEvents(NotesEvents.UpdateIsOrderSectionVisible())
+//                //..viewModel.onEvent(NoteListEventsWrapper.ToggleOrderSection)
+//                //},
+//            ) {
+//                Icon(
+//                    imageVector = Icons.Default.Sort,
+//                    contentDescription = stringResource(R.string.sort_icon_descr),
+//                    //modifier = Modifier.size(22.dp)
+//                )
+//            }
+//        }
         AnimatedVisibility(
             visible = uiState.isOrderSectionVisible,
             enter = fadeIn() + slideInVertically(),
@@ -199,9 +231,16 @@ fun NoteList(
 //                }
             )
         }
-        Spacer(modifier = Modifier.height(4.dp))
 
         //Column(modifier = Modifier.fillMaxSize()) {
+        if (uiState.isSearchVisible) {
+            Spacer(modifier = Modifier.height(4.dp))
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = "", onValueChange = {}
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+        }
         if (uiState.isGridLayout) {
             LazyVerticalStaggeredGrid(
                 //columns = GridCells.Fixed(2)
@@ -297,8 +336,8 @@ fun NoteItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = modifier
-                    //.fillMaxWidth()
-                    //.padding(1.dp)
+                //.fillMaxWidth()
+                //.padding(1.dp)
             ) {
                 Column(
                     modifier = Modifier
@@ -374,7 +413,6 @@ fun NoteItem(
         }
     }
 }
-
 
 
 @Composable
@@ -475,7 +513,7 @@ fun NoteListPreview() {
         onNoteClick = { },
         onPinnedNote = { },
         onOrderChange = {},
-        onToggleSection = { },
+        //onToggleSection = { },
     )
 }
 

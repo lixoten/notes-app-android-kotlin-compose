@@ -5,10 +5,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.GridView
-import androidx.compose.material.icons.filled.ViewList
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -23,23 +20,37 @@ fun MyTopBar(
     canAdd: Boolean = false,
     onAddRecord: () -> Unit = { },
     onToggleLayout: () -> Unit = { },
+    onToggleSection: () -> Unit = { },
+    onToggleSearch: () -> Unit = { },
+    hasMenu: Boolean = false,
+    onNavigationIconClick: () -> Unit
 //    canDelete: Boolean = false,
 //    deleteRecord: () -> Unit = { },
 //    canPin: Boolean = false,
 //    pinRecord: () -> Unit = { },
 //    isPinned: Boolean = false
 ) {
-    if (canNavigateUp) {
+    //if (canNavigateUp) {
         TopAppBar(
             title = { Text(text = screenTitle) },
             navigationIcon = {
-                IconButton(
-                    onClick = navigateUp
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = stringResource(R.string.back_arrow)
-                    )
+                if (canNavigateUp) {
+                    IconButton(
+                        onClick = navigateUp
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back_arrow)
+                        )
+                    }
+                }
+                if (hasMenu) {
+                    IconButton(onClick = onNavigationIconClick) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = "Toggle drawer"
+                        )
+                    }
                 }
             },
             actions = {
@@ -79,15 +90,31 @@ fun MyTopBar(
                             //modifier = Modifier.size(24.dp),
                         )
                     }
+                    IconButton(
+                        onClick = onToggleSection
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Sort,
+                            contentDescription = stringResource(R.string.sort_icon_descr),
+                        )
+                    }
+                    IconButton(
+                        onClick = onToggleSearch
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = stringResource(R.string.sort_icon_descr),
+                        )
+                    }
                 }
             },
 
             elevation = 8.dp
         )
-    } else {
-        TopAppBar(
-            title = { Text(text = screenTitle) },
-            elevation = 8.dp
-        )
-    }
+//    } else {
+//        TopAppBar(
+//            title = { Text(text = screenTitle) },
+//            elevation = 8.dp
+//        )
+//    }
 }

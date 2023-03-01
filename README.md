@@ -17,12 +17,17 @@ Note App that displays a list of Notes. It allows the user to add, delete notes
 - Dark/Light Theme
 - add real time Search filter 
 - swipe left delete
-
+- Add Search Logic to note list screen 
 
 ## Completed
+- Introduce Bottom AppBar to at least one screen (edit_note)
+- Add icon for notes Search Toggle  
+- Introduce Navigation Drawer to app
 - DataStore Preferences for sort options
 - Grid(StaggeredGrid) / List Toggle
 - Add Room DB
+- Add Sort, Grid Toggle as action icons in TopBar 
+- Order-by and sort list of records 
 - Manual DI
 - Introduce Sealed Data Class for Events
 - Introduce use-cases

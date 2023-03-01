@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Notes v7</string>
+    <string name="app_name">Notes</string>
 
     <string name="add_input_button">Add</string>
     <string name="add_input_label">Note</string>
@@ -15,6 +15,7 @@
 
     <string name="back_arrow">Navigate Back</string>
 
+    <string name="notes_screen_name">Notes</string>
     <string name="home_screen_name">Home Screen</string>
     <string name="dummy_screen_name">Dummy Screen</string>
     <string name="edit_add_note_screen_name">Edit Note Screen</string>

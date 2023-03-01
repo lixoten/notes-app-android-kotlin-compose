@@ -161,6 +161,15 @@ class NotesViewmodel(
                     )
                 }
             }
+            is NotesEvents.ToggleSearch -> {
+                _uiState.update {
+                    uiState.value.copy(
+                        isSearchVisible = !uiState.value.isSearchVisible
+                    )
+                }
+                //updatePreferenceLayout(uiState.value.isGridLayout)
+            }
+
             is NotesEvents.UpdateDbIsCheck -> {
                 viewModelScope.launch {
                     noteUseCasesWrapper.updateNote(

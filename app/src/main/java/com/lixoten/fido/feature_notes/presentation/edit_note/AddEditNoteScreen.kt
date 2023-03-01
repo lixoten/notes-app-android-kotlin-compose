@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.lixoten.fido.feature_notes.presentation._components_shared.MyBottomBar
 import com.lixoten.fido.R
 import com.lixoten.fido.feature_notes.model.Note
 import com.lixoten.fido.feature_notes.presentation._components_shared.MyTextField
@@ -96,6 +97,7 @@ fun EditNoteScreen(
                 screenTitle = stringResource(id = EditNoteScreenDestination.titleRes),
                 canNavigateUp = true,
                 navigateUp = { navController.navigateUp() },
+                onNavigationIconClick = { }
             )
         },
         floatingActionButton =
@@ -129,13 +131,13 @@ fun EditNoteScreen(
         } else {
             if (!uiState.dataHasChanged && !uiState.titleError) {
                 {
-                // Initial Load
-                FloatingActionButton(
-                    modifier = Modifier,
-                    onClick = { navController.popBackStack() }
-                ) {
-                    Icon(imageVector = Icons.Default.Cancel, contentDescription = "Add Task")
-                }
+                    // Initial Load
+                    FloatingActionButton(
+                        modifier = Modifier,
+                        onClick = { navController.popBackStack() }
+                    ) {
+                        Icon(imageVector = Icons.Default.Cancel, contentDescription = "Add Task")
+                    }
                 }
 
             } else {
@@ -151,6 +153,28 @@ fun EditNoteScreen(
                 }
 
             }
+        },
+        bottomBar = {
+            MyBottomBar(
+                isPinned = uiState.note.isPinned,
+                isChecked = uiState.note.isChecked,
+                hasDelete = uiState.note.id > 0,
+                onDeleteClick = {
+                    //if (uiState.note.id > 0) {
+                        //viewModel.onEvent(AddEditNoteEvents.RemoveDbNote(viewModel.uiState.value.note))
+                        openDialog = true
+                    //} else {
+                    //    navController.popBackStack()
+                    //}
+                },
+                onPinRecord = {
+                    viewModel.onEvent(AddEditNoteEvents.UpdateStatePinned)
+                },
+                onCheckedChange = {
+                    viewModel.onEvent(AddEditNoteEvents.UpdateStateCheck)
+                }
+
+            )
         },
         scaffoldState = scaffoldState,
         snackbarHost = {
@@ -211,44 +235,11 @@ fun EditNoteScreen(
                     )
                 }
             }
-            MyTextField(
-                value = uiState.note.title,
-                onValueChange = {
-
-                    viewModel.onEvent(AddEditNoteEvents.UpdateStateTitle(it))
-
-                    //if (it.length <= 15) editNoteViewModel.updateStateTitle(it)
-                    //else Toast.makeText(mContext, "Cannot be more than 5 Characters", Toast.LENGTH_SHORT).show()
-
-                },
-                onDone = { focusManager.moveFocus(FocusDirection.Down) },
-                labelResId = if (uiState.titleError) R.string.add_input_label_error else R.string.add_input_label,
-                placeHolderResId = R.string.add_input_placeholder,
-                error = uiState.titleError,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = Color(uiState.note.color))
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            MyTextField(
-                value = uiState.note.content,
-                onValueChange = {
-                    viewModel.onEvent(AddEditNoteEvents.UpdateStateContent(it))
-                },
-                labelResId = R.string.add_content_label,
-                placeHolderResId = R.string.add_content_placeholder,
-                singleLine = false,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .weight(1f)
-                    .background(color = Color(uiState.note.color))
-            )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.SpaceAround,
             ) {
                 Note.noteColors.forEach { color ->
                     val colorInt = color.toArgb()
@@ -283,6 +274,39 @@ fun EditNoteScreen(
                     }
                 }
             }
+            MyTextField(
+                value = uiState.note.title,
+                onValueChange = {
+
+                    viewModel.onEvent(AddEditNoteEvents.UpdateStateTitle(it))
+
+                    //if (it.length <= 15) editNoteViewModel.updateStateTitle(it)
+                    //else Toast.makeText(mContext, "Cannot be more than 5 Characters", Toast.LENGTH_SHORT).show()
+
+                },
+                onDone = { focusManager.moveFocus(FocusDirection.Down) },
+                labelResId = if (uiState.titleError) R.string.add_input_label_error else R.string.add_input_label,
+                placeHolderResId = R.string.add_input_placeholder,
+                error = uiState.titleError,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = Color(uiState.note.color))
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            MyTextField(
+                value = uiState.note.content,
+                onValueChange = {
+                    viewModel.onEvent(AddEditNoteEvents.UpdateStateContent(it))
+                },
+                labelResId = R.string.add_content_label,
+                placeHolderResId = R.string.add_content_placeholder,
+                singleLine = false,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .weight(1f)
+                    .background(color = Color(uiState.note.color))
+            )
         }
     }
     if (openDialog) {
