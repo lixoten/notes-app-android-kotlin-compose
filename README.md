@@ -34,6 +34,12 @@ Note App that displays a list of Notes. It allows the user to add, delete notes
 - Revisit App package structure. Add Domain package
 - At least one validation use case
 
+<p style=float:left">  
+  <img src="screenshot_01.png" width="250" />  
+  <img src="screenshot_02.png" width="250" />  
+  <img src="screenshot_03.png" width="250" />  
+  <img src="screenshot_04.png" width="250" />  
+</p>
 
 Github branches
 
